@@ -38,11 +38,11 @@ all: $(SERVER) $(CLIENT)
 
 $(NAME): all
 
-$(SERVER): $(LIBFT)
+$(SERVER): $(LIBFT) $(SRC_S)
 	@ $(CC) $(D_FLAG) $(CFLAG) $(SRC_S) $(LIBFT) $(INC) -o $(SERVER)
 	@printf "$(_SUCCESS) server ready.\n"
 
-$(CLIENT): $(LIBFT)
+$(CLIENT): $(LIBFT) $(SRC_C)
 	@ $(CC) $(D_FLAG) $(CFLAG) $(SRC_C) $(LIBFT) $(INC) -o $(CLIENT)
 	@printf "$(_SUCCESS) client ready.\n"
 
