@@ -17,28 +17,39 @@ void	put_menu_server(pid_t	pid)
 	free(str_pid);
 }
 
-void	handler_sigusr(int signum)
+void	handler_sigusr(int signum, siginfo_t *info, void *context)
 {
-   static unsigned char	c = 255;
-   static int	bits = 8;
+	static unsigned char	c = 255;
+	static int				shifter = 0;
+	static int				pid = 0;
+	int								bit;
 
+	(void)context;
+	(void)info;
 	if (signum == SIGUSR1)
 	{
-	printf("0");
-	fflush(stdout);
-	c ^= 1UL >> bits;
+    //write(1, "0", 1);
+		c ^= 1 << shifter;
+		bit = (c >> shifter) & 1U;
+		printf("shifter 1 %d\n", bit);
 	}
 	else if (signum == SIGUSR2)
 	{
-	printf("1");
-	fflush(stdout);
-	c |= 1UL >> bits;
+    //write(1, "1", 1);
+		c |= 1 << shifter;
+		bit = (c >> shifter) & 1U;
+		printf("shifter 2 %d\n", bit);
 	}
-	bits--;
-	if (bits == 0)
+	shifter++;
+	if (shifter == 8)
 	{
-		printf("-> %c\n", c);
-		bits = 7;
+		write(1, &c, 1);
+		shifter = 0;
+		if (c == 0)
+		{
+			ft_putstr_fd("\n", 1);
+			kill(pid, SIGUSR2);
+		}
 		c = 255;
 	}
 }
@@ -46,11 +57,14 @@ void	handler_sigusr(int signum)
 int	main(void)
 {
 	pid_t	pid;
+	struct sigaction	sa_signal;
 
+	sa_signal.sa_flags = SA_SIGINFO;
+	sa_signal.sa_sigaction = handler_sigusr;
+	sigaction(SIGUSR1, &sa_signal, NULL);
+	sigaction(SIGUSR2, &sa_signal, NULL);
 	pid = getpid();
 	put_menu_server(pid);
-	signal(SIGUSR1, handler_sigusr);
-	signal(SIGUSR2, handler_sigusr);
 	while (1)
 	{
 		pause();
