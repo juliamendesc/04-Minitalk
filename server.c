@@ -17,11 +17,19 @@ void	put_menu_server(pid_t	pid)
 	free(str_pid);
 }
 
+char	*print_string(char *message)
+{
+	ft_putstr(message);
+	free(message);
+	return (NULL);
+}
+
 void	handler_sigusr(int signum, siginfo_t *info, void *context)
 {
-   static unsigned char	c = 0;
-   static int	bits = 7;
-	 static	int	client_pid = 0;
+  static unsigned char	c = 0;
+  static int	bits = 7;
+	static	int	client_pid = 0;
+	static char	*message = 0;
 
 	(void)context;
 	if (info->si_pid)
@@ -31,7 +39,10 @@ void	handler_sigusr(int signum, siginfo_t *info, void *context)
 	bits--;
 	if (bits == -1)
 	{
-		write(1, &c, 1);
+		if (c)
+			message = ft_straddc(message, c);
+		else
+			message = print_string(message);
 		bits = 7;
 		c = 0;
 	}
