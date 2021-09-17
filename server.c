@@ -1,6 +1,10 @@
 #include "minitalk.h"
 #include <stdio.h>
 
+/*
+** This function puts a nice menu on server start
+*/
+
 void	put_menu_server(pid_t	pid)
 {
 	char	*str_pid;
@@ -17,12 +21,36 @@ void	put_menu_server(pid_t	pid)
 	free(str_pid);
 }
 
+/*
+** When the message is ready to print, this function is called to print it and
+** free the memory allocated to it.
+*/
+
 char	*print_string(char *message)
 {
 	ft_putstr(message);
 	free(message);
 	return (NULL);
 }
+
+/*
+** This function handles the signals coming from the client program.
+**
+** SIGUSR1 represents the bit 0, while SIGUSR2 represents the bit 1.
+** This allows us to receive messages from the client bit by bit.
+**
+** info->si_pid retrieves the PID from the client, which will allow to
+** send signals back to it.
+**
+** The binary received are converted into characters using bitwise operators
+** again and stored in the message. When there is no char, such as the null
+** character, it will call the print message function and send a signal to the
+** client to inform it has received the whole string.
+**
+** When the full string is received, we receive a NULL (0) char, which
+** means we can send a signal to the client to confirm the string
+** reached its destination.
+*/
 
 void	handler_sigusr(int signum, siginfo_t *info, void *context)
 {
@@ -42,11 +70,31 @@ void	handler_sigusr(int signum, siginfo_t *info, void *context)
 		if (c)
 			message = ft_straddc(message, c);
 		else
+		{
 			message = print_string(message);
+			ft_putchar('\n');
+			kill(client_pid, SIGUSR2);
+		}
 		bits = 7;
 		c = 0;
 	}
 }
+
+/*
+** The Sigaction structure is used to change the normal behaviour of the
+** system when receiving signals. In this case, instead of finishing the
+** program as soon as it receives the signal (normal behavior), it will
+** call the sig_handles function.
+**
+** sa_flags: Allows changing the behavior of the handling process.
+** To use the sa_sigaction handler, you must put SA_SIGINFO here.
+** SA_SIGINFO stores information about the signal. It has 3 parameters
+** (the signal, the pointer to the info about the signal and the context)
+**
+** The pid is retrieved and put in the menu for the client.
+**
+** The server waits for the signals from the client to come.
+*/
 
 int	main(void)
 {
