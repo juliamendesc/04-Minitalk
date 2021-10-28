@@ -5,7 +5,7 @@
 ** This function puts a nice menu on server start
 */
 
-void	put_menu_server(pid_t	pid)
+void	put_menu_server(pid_t pid)
 {
 	char	*str_pid;
 
@@ -52,13 +52,31 @@ char	*print_string(char *message)
 ** reached its destination.
 */
 
+void	handler_sigusr_handler(char *message, unsigned char c, int bits)
+{
+	if (c)
+		message = ft_straddc(message, c);
+	else
+	{
+		message = print_string(message);
+		ft_putchar('\n');
+		kill(client_pid, SIGUSR2);
+	}
+	bits = 7;
+	c = 0;
+}
+
 void	handler_sigusr(int signum, siginfo_t *info, void *context)
 {
-  static unsigned char	c = 0;
-  static int	bits = 7;
-	static	int	client_pid = 0;
-	static char	*message = 0;
+	static unsigned char	c;
+	static int				bits;
+	static int				client_pid;
+	static char				*message;
 
+	c = 0;
+	bits = 7;
+	client_pid = 0;
+	message = 0;
 	(void)context;
 	if (info->si_pid)
 		client_pid = info->si_pid;
@@ -66,18 +84,7 @@ void	handler_sigusr(int signum, siginfo_t *info, void *context)
 		c |= (1UL << bits);
 	bits--;
 	if (bits == -1)
-	{
-		if (c)
-			message = ft_straddc(message, c);
-		else
-		{
-			message = print_string(message);
-			ft_putchar('\n');
-			kill(client_pid, SIGUSR2);
-		}
-		bits = 7;
-		c = 0;
-	}
+		handler_sigusr_handler(message, c, bits);
 }
 
 /*
@@ -98,7 +105,7 @@ void	handler_sigusr(int signum, siginfo_t *info, void *context)
 
 int	main(void)
 {
-	pid_t	pid;
+	pid_t				pid;
 	struct sigaction	sa_signal;
 
 	sa_signal.sa_flags = SA_SIGINFO;
