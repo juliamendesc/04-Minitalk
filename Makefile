@@ -2,6 +2,7 @@
 NAME	=
 CLIENT	=	client
 SERVER	=	server
+
 	# libft Variables #
 LIBFT		=	./libft/libft.a
 LIBFT_DIR	=	./libft

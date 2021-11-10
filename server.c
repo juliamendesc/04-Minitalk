@@ -1,5 +1,4 @@
 #include "minitalk.h"
-#include <stdio.h>
 
 /*
 ** This function puts a nice menu on server start
@@ -55,7 +54,7 @@ char *print_string(char *message)
 void handler_sigusr_handler(char **message, unsigned char c, int client_pid)
 {
 	if (c)
-		*message = ft_straddc(*message, c);
+		*message = ft_straddchar(*message, c);
 	else
 	{
 		*message = print_string(*message);

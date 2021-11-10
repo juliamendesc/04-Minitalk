@@ -1,5 +1,5 @@
 #include "minitalk.h"
-#include <stdio.h>
+#include "./libft/includes/libft.h"
 
 /*
 ** This function handles the signals received from the server.
@@ -7,7 +7,7 @@
 ** and the program closes.
 */
 
-void	sig_handler(int signum, siginfo_t *info, void *context)
+void sig_handler(int signum, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
@@ -22,9 +22,9 @@ void	sig_handler(int signum, siginfo_t *info, void *context)
 ** This functions sends the null character to finish the string.
 */
 
-void	finish_transmission(int pid)
+void finish_transmission(int pid)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i++ < 8)
@@ -43,10 +43,10 @@ void	finish_transmission(int pid)
 ** finish transmission, that will pass the null character.
 */
 
-void	send_signal(char *str, int server_pid)
+void send_signal(char *str, int server_pid)
 {
-	int	i;
-	int	shifter;
+	int i;
+	int shifter;
 
 	i = 0;
 	while (str[i])
@@ -88,10 +88,10 @@ void	send_signal(char *str, int server_pid)
 **
 */
 
-int	main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	int					server_pid;
-	struct sigaction	sa_signals;
+	int server_pid;
+	struct sigaction sa_signals;
 
 	if (argc == 3)
 	{
