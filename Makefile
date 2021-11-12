@@ -10,8 +10,7 @@ LIBFT_DIR	=	./libft
 	# Mandatory Variables #
 SRC_C	=	client.c
 SRC_S	=	server.c
-INC		=	-I. -I$(LIBFT_DIR) -I$(LIBFT_DIR)/stack \
-			-I$(LIBFT_DIR)/get_next_line
+INC		=	-I. -I$(LIBFT_DIR) -I$(LIBFT_DIR)/get_next_line
 
 	# Compiling Variables #
 CC			=	gcc
@@ -25,31 +24,21 @@ RESET		=	\e[0m
 _SUCCESS	=	[$(GREEN)SUCCESS$(RESET)]
 _INFO		=	[$(YELLOW)INFO$(RESET)]
 
-	# Debugger #
-ifeq ($(DEBUG), 1)
-	D_FLAG	=	-g
-endif
-
-	# Fsanitize #
-ifeq ($(SANITIZE), 1)
-	D_FLAG	=	-fsanitize=leak -g
-endif
-
 all: $(SERVER) $(CLIENT)
 
 $(NAME): all
 
 $(SERVER): $(LIBFT) $(SRC_S)
-	@ $(CC) $(D_FLAG) $(CFLAG) $(SRC_S) $(LIBFT) $(INC) -o $(SERVER)
+	@ $(CC) $(CFLAG) $(SRC_S) $(LIBFT) $(INC) -o $(SERVER)
 	@printf "$(_SUCCESS) server ready.\n"
 
 $(CLIENT): $(LIBFT) $(SRC_C)
-	@ $(CC) $(D_FLAG) $(CFLAG) $(SRC_C) $(LIBFT) $(INC) -o $(CLIENT)
+	@ $(CC) $(CFLAG) $(SRC_C) $(LIBFT) $(INC) -o $(CLIENT)
 	@printf "$(_SUCCESS) client ready.\n"
 
 
 $(LIBFT):
-	@ $(MAKE) DEBUG=$(DEBUG) -C ./libft
+	@ $(MAKE) -C ./libft
 
 clean:
 	@ $(RM) $(CLIENT) $(SERVER)
