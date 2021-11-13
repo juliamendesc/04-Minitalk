@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: julcarva <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/13 16:47:03 by julcarva          #+#    #+#             */
+/*   Updated: 2021/11/13 16:47:42 by julcarva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
 /*
 ** This function puts a nice menu on server start
 */
 
-void put_menu_server(pid_t pid)
+void	put_menu_server(pid_t pid)
 {
-	char *str_pid;
+	char	*str_pid;
 
 	str_pid = ft_itoa(pid);
 	ft_putstr_in_color(TEXT_COLOR_GREEN, "\t\t\tWelcome in Minitalk\n");
@@ -25,7 +37,7 @@ void put_menu_server(pid_t pid)
 ** free the memory allocated to it.
 */
 
-char *print_string(char *message)
+char	*print_string(char *message)
 {
 	ft_putstr(message);
 	free(message);
@@ -51,7 +63,7 @@ char *print_string(char *message)
 ** reached its destination.
 */
 
-void handler_sigusr_handler(char **message, unsigned char c, int client_pid)
+void	handler_sigusr_handler(char **message, unsigned char c, int client_pid)
 {
 	if (c)
 		*message = ft_straddchar(*message, c);
@@ -63,17 +75,13 @@ void handler_sigusr_handler(char **message, unsigned char c, int client_pid)
 	}
 }
 
-void handler_sigusr(int signum, siginfo_t *info, void *context)
+void	handler_sigusr(int signum, siginfo_t *info, void *context)
 {
-	static unsigned char c = 0;
-	static int bits = 7;
-	static int client_pid = 0;
-	static char *message = 0;
+	static unsigned char	c = 0;
+	static int				bits = 7;
+	static int				client_pid = 0;
+	static char				*message = 0;
 
-	// c = 0;
-	// bits = 7;
-	// client_pid = 0;
-	// message = 0;
 	(void)context;
 	if (info->si_pid)
 		client_pid = info->si_pid;
@@ -104,10 +112,10 @@ void handler_sigusr(int signum, siginfo_t *info, void *context)
 ** The server waits for the signals from the client to come.
 */
 
-int main(void)
+int	main(void)
 {
-	pid_t pid;
-	struct sigaction sa_signal;
+	pid_t				pid;
+	struct sigaction	sa_signal;
 
 	sa_signal.sa_flags = SA_SIGINFO;
 	sa_signal.sa_sigaction = handler_sigusr;
